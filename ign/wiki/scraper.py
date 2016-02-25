@@ -36,7 +36,7 @@ def __generate_html(gt, gp, pt, pc, html_dir):
     '''
     if not os.path.exists(html_dir): os.makedirs(html_dir)
     if len(pc) > 0:
-        filename = ' '.join([str(t) for t in gt])\
+        filename = 'MMRICA-'+' '.join([str(t) for t in gt])\
                  + ' - ' + ' '.join([str(t.get_text().strip()) for t in pt])\
                  + ' - ' + ' '.join([str(p) for p in gp])
         for c in bad_char: filename = filename.replace(c, ' - ')
