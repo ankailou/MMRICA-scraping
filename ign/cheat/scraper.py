@@ -18,6 +18,7 @@ from bs4 import BeautifulSoup
 ############################## global veriables ###############################
 ###############################################################################
 
+bad_char = [':', ';', ',', '/', '*', '&', '^', '%', '$', '#', '@']
 bad_tags = ['div.gh-next-prev-buttons', 'img', 'p.wiki-videoEmbed']
 selectors =  {'gt' : 'h2.contentTitle a',
               'gp' : 'div.contentPlatformsText span a',
@@ -42,9 +43,10 @@ def __generate_html(gt, gp, content, category, html_dir):
     filename = ' '.join([str(t) for t in gt])\
              + ' ' + category\
              + ' - ' + ' '.join([str(t.get_text().strip()) for t in title])\
-             + ' - ' + ' '.join([str(p) for p in gp]) + '.html'
+             + ' - ' + ' '.join([str(p) for p in gp])
+    for c in bad_char: filename = filename.replace(c, ' - ')
     print 'Generating file:', filename
-    file = open(os.path.join(html_dir, filename.replace('/',' - ')), 'w+')
+    file = open(os.path.join(html_dir, filename + '.html'), 'w+')
     file.write('<html>\n<head></head>\n<body>')
     file.write(unicode(content).strip().encode('ascii','ignore'))
     file.write('</body>\n</html>')
@@ -58,7 +60,7 @@ def __sanitize_html(content):
     tmp = BeautifulSoup('', 'html.parser')
     for tree in content:
         for a in tree.select("a"):
-            p = tmp.new_tag("p")
+            p = tmp.new_tag("span")
             p.string = a.get_text().strip()
             a.replace_with(p)
     for t in [tag
@@ -66,7 +68,7 @@ def __sanitize_html(content):
               for tag in tree.select(selector)]: t.extract()
     return content
 
-def scrape(url, html="../../html/ign/"):
+def scrape(url, html=os.getcwd()+"../../html/ign/"):
     ''' function: scrape
         ----------------
         compile relevant title, content, and system into HTML document
@@ -87,6 +89,7 @@ def scrape(url, html="../../html/ign/"):
         tags = __sanitize_html(soup.select(selector))
         for t in tags: __generate_html(gt, gp, t, category, html)
     print 'Document scraped in', time() - start, 'seconds'
+    return set([url])
 
 ###############################################################################
 ##################### main function for testing purposes ######################
