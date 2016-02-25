@@ -3,3 +3,10 @@
 *.swp
 *.html
 html/
+*.tar
+ign/wiki/bs4/tests/__init__.py
+ign/wiki/bs4/tests/test_tree.py
+ign/wiki/bs4/__init__.py
+ign/wiki/bs4/tests/test_soup.py
+ign/wiki/bs4/
+bs4/
